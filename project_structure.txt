@@ -1,0 +1,19 @@
+lib/
+├── core/
+│   ├── api/
+│   ├── error/
+│   ├── network/
+│   └── utils/
+├── data/
+│   ├── datasources/
+│   ├── models/
+│   └── repositories/
+├── domain/
+│   ├── entities/
+│   ├── repositories/
+│   └── usecases/
+├── presentation/
+│   ├── bloc/
+│   ├── pages/
+│   └── widgets/
+└── main.dart 
