@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/localization/app_localizations.dart';
@@ -27,19 +28,29 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(AppLocalizations.of(context).translate('app_title')),
+
         actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
+          InkWell(
+            onTap: () {
               NavigationService.push(
                 context,
                 const SearchScreen(),
               );
             },
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: SvgPicture.asset(
+                "assets/svg/search.svg",
+                width: 25,
+                height: 25,
+              ),
+            ),
           ),
         ],
       ),
+
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -51,8 +62,8 @@ class HomePage extends StatelessWidget {
               child: Text(
                 AppLocalizations.of(context).translate('app_title'),
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
               ),
             ),
             ListTile(
@@ -93,7 +104,7 @@ class HomePage extends StatelessWidget {
               leading: const Icon(Icons.language),
               title: const Text('Language'),
               trailing: const LanguageSelector(),
-              onTap: () {}, // Empty onTap as we're using the trailing widget
+              onTap: () {},
             ),
             Consumer<ThemeService>(
               builder: (context, themeService, child) {
@@ -147,4 +158,4 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-} 
+}

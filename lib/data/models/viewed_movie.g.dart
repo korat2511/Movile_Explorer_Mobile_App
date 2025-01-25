@@ -20,6 +20,7 @@ class ViewedMovieAdapter extends TypeAdapter<ViewedMovie> {
       id: fields[0] as int,
       title: fields[1] as String,
       posterPath: fields[2] as String?,
+      backdropPath: fields[8] as String?,
       overview: fields[3] as String,
       releaseDate: fields[4] as String,
       voteAverage: fields[5] as double,
@@ -31,7 +32,7 @@ class ViewedMovieAdapter extends TypeAdapter<ViewedMovie> {
   @override
   void write(BinaryWriter writer, ViewedMovie obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -47,7 +48,9 @@ class ViewedMovieAdapter extends TypeAdapter<ViewedMovie> {
       ..writeByte(6)
       ..write(obj.viewedAt)
       ..writeByte(7)
-      ..write(obj.isFavorite);
+      ..write(obj.isFavorite)
+      ..writeByte(8)
+      ..write(obj.backdropPath);
   }
 
   @override

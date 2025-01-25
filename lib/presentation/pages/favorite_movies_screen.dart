@@ -7,6 +7,7 @@ import '../../data/services/local_storage_service.dart';
 import '../widgets/movie_grid_item.dart';
 
 class FavoriteMoviesScreen extends StatelessWidget {
+
   const FavoriteMoviesScreen({super.key});
 
   @override
@@ -17,7 +18,7 @@ class FavoriteMoviesScreen extends StatelessWidget {
       ),
       body: Consumer<LocalStorageService>(
         builder: (context, storage, child) {
-          final favoriteMovies = storage.getFavoriteMovies();
+          final favoriteMovies = storage.getLikedMovies();
 
           if (favoriteMovies.isEmpty) {
             return Center(
@@ -44,7 +45,8 @@ class FavoriteMoviesScreen extends StatelessWidget {
           return GridView.builder(
             padding: ResponsiveLayout.getScreenPadding(context),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: ResponsiveLayout.getGridCrossAxisCount(context).toInt(),
+              crossAxisCount:
+                  ResponsiveLayout.getGridCrossAxisCount(context).toInt(),
               childAspectRatio: 0.7,
               crossAxisSpacing: 8,
               mainAxisSpacing: 8,
@@ -62,8 +64,9 @@ class FavoriteMoviesScreen extends StatelessWidget {
                       overview: movie.overview,
                       releaseDate: movie.releaseDate,
                       voteAverage: movie.voteAverage,
+
                       voteCount: 0,
-                      backdropPath: null,
+                      backdropPath: movie.backdropPath,
                       adult: false,
                       genreIds: [],
                       originalLanguage: '',
@@ -87,15 +90,32 @@ class FavoriteMoviesScreen extends StatelessWidget {
                           size: 20,
                         ),
                         onPressed: () {
-                          storage.toggleFavorite(movie.id);
+                          storage.toggleLike(
+                            movie.id,
+                            movie.title,
+                            movie.overview,
+                            movie.releaseDate,
+                            movie.voteAverage,
+                            movie.posterPath,
+                            movie.backdropPath,
+                          );
                           // Show a snackbar to confirm removal
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('${movie.title} removed from favorites'),
+                              content:
+                                  Text('${movie.title} removed from favorites'),
                               duration: const Duration(seconds: 2),
                               action: SnackBarAction(
                                 label: 'Undo',
-                                onPressed: () => storage.toggleFavorite(movie.id),
+                                onPressed: () => storage.toggleLike(
+                                  movie.id,
+                                  movie.title,
+                                  movie.overview,
+                                  movie.releaseDate,
+                                  movie.voteAverage,
+                                  movie.posterPath,
+                                  movie.backdropPath,
+                                ),
                               ),
                             ),
                           );
@@ -111,4 +131,4 @@ class FavoriteMoviesScreen extends StatelessWidget {
       ),
     );
   }
-} 
+}

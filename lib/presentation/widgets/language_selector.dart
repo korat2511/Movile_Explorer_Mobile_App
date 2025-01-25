@@ -9,6 +9,7 @@ class LanguageSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return PopupMenuButton<String>(
       icon: const Icon(Icons.language),
+
       onSelected: (String languageCode) {
         context.read<LanguageService>().setLanguage(languageCode);
       },

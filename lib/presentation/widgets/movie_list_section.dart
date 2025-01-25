@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../core/navigation/navigation_service.dart';
+import '../../core/utils/responsive_layout.dart';
 import '../../data/models/movie_details.dart';
 import '../bloc/movie_bloc.dart';
 import '../pages/movie_list_screen.dart';
-import 'movie_card.dart';
-import '../../core/utils/responsive_layout.dart';
 import 'error_view.dart';
+import 'movie_card.dart';
 
 class MovieListSection extends StatelessWidget {
   final String title;

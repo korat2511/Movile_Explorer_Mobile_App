@@ -183,7 +183,7 @@ class MovieDetailsContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Overview',
           style: TextStyle(
             fontSize: 20,

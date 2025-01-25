@@ -36,25 +36,22 @@ class MovieCard extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Hero(
-                      tag: 'movie_poster_list_${movie.id}',
-                      child: SizedBox(
-                        width: cardWidth,
-                        height: cardHeight,
-                        child: movie.posterPath != null
-                            ? Image.network(
-                                movie.fullPosterPath!,
-                                fit: BoxFit.cover,
-                              )
-                            : Container(
-                                color: Theme.of(context).colorScheme.surface,
-                                child: Icon(
-                                  Icons.movie,
-                                  color: Theme.of(context).colorScheme.onSurface,
-                                  size: cardWidth * 0.3,
-                                ),
+                    child: SizedBox(
+                      width: cardWidth,
+                      height: cardHeight,
+                      child: movie.posterPath != null
+                          ? Image.network(
+                              movie.fullPosterPath!,
+                              fit: BoxFit.cover,
+                            )
+                          : Container(
+                              color: Theme.of(context).colorScheme.surface,
+                              child: Icon(
+                                Icons.movie,
+                                color: Theme.of(context).colorScheme.onSurface,
+                                size: cardWidth * 0.3,
                               ),
-                      ),
+                            ),
                     ),
                   ),
                   Positioned(
@@ -65,7 +62,7 @@ class MovieCard extends StatelessWidget {
                         color: Colors.black54,
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: LikeButton(movieId: movie.id),
+                      child: LikeButton(movieId: movie.id, movie: movie,),
                     ),
                   ),
                 ],

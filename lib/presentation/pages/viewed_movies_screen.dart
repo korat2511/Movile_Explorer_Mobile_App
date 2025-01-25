@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../data/models/movie_details.dart';
-import '../widgets/movie_grid_item.dart';
 import '../../data/services/local_storage_service.dart';
+import '../widgets/movie_grid_item.dart';
 
 class ViewedMoviesScreen extends StatefulWidget {
   const ViewedMoviesScreen({super.key});
@@ -27,7 +28,7 @@ class _ViewedMoviesScreenState extends State<ViewedMoviesScreen> {
         releaseDate: viewedMovie.releaseDate,
         voteAverage: viewedMovie.voteAverage,
         voteCount: 0,
-        backdropPath: null,
+        backdropPath: viewedMovie.backdropPath,
         adult: true,
         genreIds: [],
         originalLanguage: '',
@@ -103,8 +104,9 @@ class _ViewedMoviesScreenState extends State<ViewedMoviesScreen> {
                     overview: movie.overview,
                     releaseDate: movie.releaseDate,
                     voteAverage: movie.voteAverage,
+
                     voteCount: 0,
-                    backdropPath: null,
+                    backdropPath: movie.backdropPath,
                     adult: true,
                     genreIds: [],
                     originalLanguage: '',

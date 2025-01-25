@@ -70,7 +70,7 @@ class MovieDetailsBloc extends Bloc<MovieDetailsEvent, MovieDetailsState> {
     required this.movieId,
   }) : super(MovieDetailsState(
           isViewed: storage.isMovieViewed(movieId),
-          isFavorite: storage.isMovieFavorite(movieId),
+          isFavorite: storage.isMovieLiked(movieId),
         )) {
     on<LoadMovieDetails>(_onLoadMovieDetails);
     on<ToggleFavorite>(_onToggleFavorite);
@@ -105,7 +105,15 @@ class MovieDetailsBloc extends Bloc<MovieDetailsEvent, MovieDetailsState> {
     ToggleFavorite event,
     Emitter<MovieDetailsState> emit,
   ) async {
-    await storage.toggleFavorite(movieId);
+    await storage.toggleLike(
+      movieId,
+      movie.title,
+      movie.overview,
+      movie.releaseDate,
+      movie.voteAverage,
+      movie.posterPath,
+      movie.backdropPath,
+    );
     emit(state.copyWith(isFavorite: !state.isFavorite));
   }
-} 
+}

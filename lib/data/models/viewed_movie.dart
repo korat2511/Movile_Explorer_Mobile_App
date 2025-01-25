@@ -30,10 +30,14 @@ class ViewedMovie extends HiveObject {
   @HiveField(7)
   bool isFavorite;
 
+  @HiveField(8)
+  final String? backdropPath;
+
   ViewedMovie({
     required this.id,
     required this.title,
     this.posterPath,
+    this.backdropPath,
     required this.overview,
     required this.releaseDate,
     required this.voteAverage,
@@ -46,6 +50,7 @@ class ViewedMovie extends HiveObject {
       id: movie.id,
       title: movie.title,
       posterPath: movie.posterPath,
+      backdropPath: movie.backdropPath,
       overview: movie.overview,
       releaseDate: movie.releaseDate,
       voteAverage: movie.voteAverage,

@@ -1,10 +1,12 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../data/repositories/movie_repository_impl.dart';
 import '../bloc/movie_list_bloc.dart';
 import '../widgets/error_view.dart';
 import '../widgets/movie_grid_item.dart';
-import '../../data/repositories/movie_repository_impl.dart';
 
 class MovieListScreen extends StatelessWidget {
   final String title;

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -5,51 +7,74 @@ import '../models/viewed_movie.dart';
 
 class LocalStorageService extends ChangeNotifier {
   static const String _viewedMoviesBox = 'viewed_movies';
-  late Box<ViewedMovie> _box;
+  static const String _likedMoviesBox = 'liked_movies';
+  late Box<ViewedMovie> _viewedBox;
+  late Box<ViewedMovie> _likedBox;
 
   Future<void> init() async {
     await Hive.initFlutter();
     Hive.registerAdapter(ViewedMovieAdapter());
-    _box = await Hive.openBox<ViewedMovie>(_viewedMoviesBox);
+    _viewedBox = await Hive.openBox<ViewedMovie>(_viewedMoviesBox);
+    _likedBox = await Hive.openBox<ViewedMovie>(_likedMoviesBox);
   }
 
   Future<void> addViewedMovie(ViewedMovie movie) async {
-    await _box.put(movie.id, movie);
+    await _viewedBox.put(movie.id, movie);
   }
 
   Future<void> removeViewedMovie(int movieId) async {
-    await _box.delete(movieId);
+    await _viewedBox.delete(movieId);
   }
 
   List<ViewedMovie> getViewedMovies() {
-    return _box.values.toList()
+    return _viewedBox.values.toList()
       ..sort((a, b) => b.viewedAt.compareTo(a.viewedAt));
   }
 
-  List<ViewedMovie> getFavoriteMovies() {
-    return _box.values.where((movie) => movie.isFavorite).toList()
+  List<ViewedMovie> getLikedMovies() {
+    return _likedBox.values.where((movie) => movie.isFavorite).toList()
       ..sort((a, b) => b.viewedAt.compareTo(a.viewedAt));
   }
 
   bool isMovieViewed(int movieId) {
-    return _box.containsKey(movieId);
+    return _viewedBox.containsKey(movieId);
   }
 
-  bool isMovieFavorite(int movieId) {
-    final movie = _box.get(movieId);
+  bool isMovieLiked(int movieId) {
+    final movie = _likedBox.get(movieId);
+
     return movie?.isFavorite ?? false;
   }
 
-  Future<void> toggleFavorite(int movieId) async {
-    final movie = _box.get(movieId);
+  Future<void> toggleLike(int movieId, title, overview, releaseDate, voteAverage, posterPath, backdropPath) async {
+    log("MID == $movieId");
+    final movie = _likedBox.get(movieId);
+
     if (movie != null) {
       movie.isFavorite = !movie.isFavorite;
-      await _box.put(movieId, movie);
-      notifyListeners();
+      await _likedBox.put(movieId, movie);
+    } else {
+      final newMovie = ViewedMovie(
+        id: movieId,
+        isFavorite: true,
+        title: title,
+        overview: overview,
+        releaseDate: releaseDate,
+        voteAverage: voteAverage,
+        posterPath: posterPath,
+        backdropPath: backdropPath,
+        viewedAt: DateTime.timestamp(),
+      );
+      await _likedBox.put(movieId, newMovie);
     }
+    notifyListeners();
   }
 
   Future<void> clearViewedMovies() async {
-    await _box.clear();
+    await _viewedBox.clear();
   }
-} 
+
+  Future<void> clearLikedMovies() async {
+    await _likedBox.clear();
+  }
+}
