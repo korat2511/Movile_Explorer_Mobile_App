@@ -1,16 +1,28 @@
-# movie_explorer
+# Movie Explorer
 
-A new Flutter project.
+[![CI/CD](https://github.com/username/movie-explorer/actions/workflows/ci.yml/badge.svg)](https://github.com/username/movie-explorer/actions/workflows/ci.yml)
+
+A Flutter application that fetches data from The Movie Database (TMDB) API and allows users to discover and search for movies.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+1. Clone the repository
+2. Run `flutter pub get`
+3. Add your TMDB API key to `lib/config/constants.dart`
+4. Run the app using `flutter run`
 
-A few resources to get you started if this is your first Flutter project:
+## Features
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Browse popular, top-rated, and upcoming movies
+- Search for movies
+- View movie details including cast
+- Save favorite movies
+- Dark/light theme support
+- Responsive layout for phones and tablets
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Development
+
+- Run tests: `flutter test`
+- Build APK: `flutter build apk --release`
+- Format code: `dart format .`
+- Analyze code: `flutter analyze`
