@@ -10,6 +10,7 @@ class ApiConfig {
   static const String searchEndpoint = '/search/movie';
   
   static const String imageBaseUrl = 'https://image.tmdb.org/t/p/';
+  static const String youtubeBaseUrl = 'https://www.youtube.com/watch?v=';
   
   static String getImageUrl(String path, {ImageSize size = ImageSize.original}) {
     return '$imageBaseUrl${size.value}$path';
@@ -18,6 +19,7 @@ class ApiConfig {
   static String getMovieDetailsEndpoint(int movieId) => '/movie/$movieId';
   static String getMovieCreditsEndpoint(int movieId) => '/movie/$movieId/credits';
   static String getMovieReviewsEndpoint(int movieId) => '/movie/$movieId/reviews';
+  static String getMovieVideosEndpoint(int movieId) => '/movie/$movieId/videos';
 }
 
 enum ImageSize {

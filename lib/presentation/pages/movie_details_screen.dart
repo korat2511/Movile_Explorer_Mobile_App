@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:readmore/readmore.dart';
+import '../pages/video_player_screen.dart';
 import '../bloc/movie_details_bloc.dart';
 import '../../data/models/movie_details.dart';
 import '../../data/repositories/movie_repository_impl.dart';
 import '../../data/services/local_storage_service.dart';
 import '../../core/utils/responsive_layout.dart';
+import '../../core/api/api_config.dart';
 import '../../presentation/widgets/error_view.dart';
 
 class MovieDetailsScreen extends StatelessWidget {
@@ -77,6 +79,18 @@ class MovieDetailsContent extends StatelessWidget {
       actions: [
         BlocBuilder<MovieDetailsBloc, MovieDetailsState>(
           builder: (context, state) {
+            if (state.status == MovieDetailsStatus.success && state.videos.isNotEmpty) {
+              return IconButton(
+                icon: const Icon(Icons.play_circle_outline),
+                onPressed: () => _launchTrailer(context, state.videos.first.key),
+                tooltip: 'Play Trailer',
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
+        BlocBuilder<MovieDetailsBloc, MovieDetailsState>(
+          builder: (context, state) {
             return TweenAnimationBuilder<double>(
               tween: Tween(begin: 0.0, end: 1.0),
               duration: const Duration(milliseconds: 300),
@@ -99,14 +113,49 @@ class MovieDetailsContent extends StatelessWidget {
           },
         ),
       ],
-      flexibleSpace: FlexibleSpaceBar(
-        title: Text(movie.title),
-        background: movie.backdropPath != null
-            ? Image.network(
-                movie.fullBackdropPath!,
-                fit: BoxFit.cover,
-              )
-            : Container(color: Colors.grey[800]),
+      flexibleSpace: Stack(
+        children: [
+          FlexibleSpaceBar(
+            title: Text(movie.title),
+            background: movie.backdropPath != null
+                ? Image.network(
+                    movie.fullBackdropPath!,
+                    fit: BoxFit.cover,
+                  )
+                : Container(color: Colors.grey[800]),
+          ),
+          BlocBuilder<MovieDetailsBloc, MovieDetailsState>(
+            builder: (context, state) {
+              if (state.status == MovieDetailsStatus.success && state.videos.isNotEmpty) {
+                return Positioned.fill(
+                  child: Center(
+                    child: IconButton(
+                      iconSize: 64,
+                      icon: const Icon(
+                        Icons.play_circle_fill,
+                        color: Colors.white,
+                      ),
+                      onPressed: () => _launchTrailer(context, state.videos.first.key),
+                    ),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _launchTrailer(BuildContext context, String videoKey) async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => VideoPlayerScreen(
+          videoKey: videoKey,
+          title: movie.title,
+        ),
       ),
     );
   }

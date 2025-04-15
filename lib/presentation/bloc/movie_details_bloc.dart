@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/models/cast.dart';
 import '../../data/models/movie_details.dart';
 import '../../data/models/review.dart';
+import '../../data/models/video.dart';
 import '../../data/services/local_storage_service.dart';
 import '../../domain/repositories/movie_repository.dart';
 
@@ -24,41 +25,45 @@ class ToggleFavorite extends MovieDetailsEvent {}
 // State
 class MovieDetailsState extends Equatable {
   final List<Cast> cast;
+  final List<Review> reviews;
+  final List<Video> videos;
   final MovieDetailsStatus status;
   final String? error;
   final bool isViewed;
   final bool isFavorite;
-  final List<Review> reviews;
 
   const MovieDetailsState({
     this.cast = const [],
+    this.reviews = const [],
+    this.videos = const [],
     this.status = MovieDetailsStatus.initial,
     this.error,
     this.isViewed = false,
     this.isFavorite = false,
-    this.reviews = const [],
   });
 
   MovieDetailsState copyWith({
     List<Cast>? cast,
+    List<Review>? reviews,
+    List<Video>? videos,
     MovieDetailsStatus? status,
     String? error,
     bool? isViewed,
     bool? isFavorite,
-    List<Review>? reviews,
   }) {
     return MovieDetailsState(
       cast: cast ?? this.cast,
+      reviews: reviews ?? this.reviews,
+      videos: videos ?? this.videos,
       status: status ?? this.status,
       error: error,
       isViewed: isViewed ?? this.isViewed,
       isFavorite: isFavorite ?? this.isFavorite,
-      reviews: reviews ?? this.reviews,
     );
   }
 
   @override
-  List<Object?> get props => [cast, status, error, isViewed, isFavorite, reviews];
+  List<Object?> get props => [cast, reviews, videos, status, error, isViewed, isFavorite];
 }
 
 // BLoC
@@ -89,10 +94,12 @@ class MovieDetailsBloc extends Bloc<MovieDetailsEvent, MovieDetailsState> {
       emit(state.copyWith(status: MovieDetailsStatus.loading));
       final cast = await repository.getMovieCast(movieId);
       final reviews = await repository.getMovieReviews(movieId);
+      final videos = await repository.getMovieVideos(movieId);
       emit(state.copyWith(
         status: MovieDetailsStatus.success,
         cast: cast,
         reviews: reviews,
+        videos: videos,
       ));
     } catch (e) {
       emit(state.copyWith(

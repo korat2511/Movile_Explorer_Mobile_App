@@ -8,6 +8,7 @@ import '../../presentation/bloc/movie_details_bloc.dart';
 import '../models/cast.dart';
 import '../models/movie_details.dart';
 import '../models/review.dart';
+import '../models/video.dart';
 
 class MovieRepositoryImpl implements MovieRepository {
   final Dio _dio;
@@ -176,6 +177,30 @@ class MovieRepositoryImpl implements MovieRepository {
         return reviewsList.map((review) => Review.fromJson(review)).toList();
       } catch (e) {
         print('Error fetching movie reviews: $e');
+        throw _handleError(e);
+      }
+    });
+  }
+
+  @override
+  Future<List<Video>> getMovieVideos(int movieId) async {
+    return _retryOnError(() async {
+      try {
+        print('Fetching movie videos for ID: $movieId');
+        final response = await _dio.get(ApiConfig.getMovieVideosEndpoint(movieId));
+        final videosList = response.data['results'] as List;
+        final videos = videosList.map((video) => Video.fromJson(video)).toList();
+        
+        // Filter for YouTube trailers and sort by official first
+        return videos
+          .where((video) => video.isYoutubeVideo && video.isTrailer)
+          .toList()
+          ..sort((a, b) {
+            if (a.official != b.official) return a.official ? -1 : 1;
+            return DateTime.parse(b.publishedAt).compareTo(DateTime.parse(a.publishedAt));
+          });
+      } catch (e) {
+        print('Error fetching movie videos: $e');
         throw _handleError(e);
       }
     });

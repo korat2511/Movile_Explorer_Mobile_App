@@ -1,6 +1,7 @@
 import '../../data/models/cast.dart';
 import '../../data/models/movie_details.dart';
 import '../../data/models/review.dart';
+import '../../data/models/video.dart';
 import '../../presentation/bloc/movie_details_bloc.dart';
 
 abstract class MovieRepository {
@@ -12,4 +13,5 @@ abstract class MovieRepository {
   Future<MovieDetails> getMovieDetails(int movieId);
   Future<List<Cast>> getMovieCast(int movieId);
   Future<List<Review>> getMovieReviews(int movieId);
+  Future<List<Video>> getMovieVideos(int movieId);
 } 
