@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -10,15 +11,24 @@ import 'data/repositories/movie_repository_impl.dart';
 import 'data/services/language_service.dart';
 import 'data/services/local_storage_service.dart';
 import 'data/services/theme_service.dart';
+import 'firebase_options.dart';
 import 'presentation/bloc/movie_bloc.dart';
 import 'presentation/pages/home_page.dart';
+import 'core/services/ad_service.dart';
+import 'core/services/premium_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   final prefs = await SharedPreferences.getInstance();
   final storage = LocalStorageService();
   await storage.init();
+
+  // Initialize services
+  await AdService.initialize();
+  await PremiumService.initialize();
 
   runApp(
     MultiProvider(

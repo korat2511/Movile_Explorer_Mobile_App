@@ -11,6 +11,7 @@ import '../pages/search_screen.dart';
 import '../pages/viewed_movies_screen.dart';
 import '../widgets/language_selector.dart';
 import '../widgets/movie_list_section.dart';
+import '../widgets/tmdb_attribution.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -124,6 +125,8 @@ class HomePage extends StatelessWidget {
                 );
               },
             ),
+            const Divider(),
+            const TMDBAttribution(),
           ],
         ),
       ),
