@@ -1,10 +1,11 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../data/models/cast.dart';
 import '../../data/models/movie_details.dart';
-import '../../domain/repositories/movie_repository.dart';
-import '../../data/models/viewed_movie.dart';
+import '../../data/models/review.dart';
 import '../../data/services/local_storage_service.dart';
+import '../../domain/repositories/movie_repository.dart';
 
 enum MovieDetailsStatus { initial, loading, success, error }
 
@@ -27,6 +28,7 @@ class MovieDetailsState extends Equatable {
   final String? error;
   final bool isViewed;
   final bool isFavorite;
+  final List<Review> reviews;
 
   const MovieDetailsState({
     this.cast = const [],
@@ -34,6 +36,7 @@ class MovieDetailsState extends Equatable {
     this.error,
     this.isViewed = false,
     this.isFavorite = false,
+    this.reviews = const [],
   });
 
   MovieDetailsState copyWith({
@@ -42,6 +45,7 @@ class MovieDetailsState extends Equatable {
     String? error,
     bool? isViewed,
     bool? isFavorite,
+    List<Review>? reviews,
   }) {
     return MovieDetailsState(
       cast: cast ?? this.cast,
@@ -49,11 +53,12 @@ class MovieDetailsState extends Equatable {
       error: error,
       isViewed: isViewed ?? this.isViewed,
       isFavorite: isFavorite ?? this.isFavorite,
+      reviews: reviews ?? this.reviews,
     );
   }
 
   @override
-  List<Object?> get props => [cast, status, error, isViewed, isFavorite];
+  List<Object?> get props => [cast, status, error, isViewed, isFavorite, reviews];
 }
 
 // BLoC
@@ -80,18 +85,14 @@ class MovieDetailsBloc extends Bloc<MovieDetailsEvent, MovieDetailsState> {
     LoadMovieDetails event,
     Emitter<MovieDetailsState> emit,
   ) async {
-    emit(state.copyWith(status: MovieDetailsStatus.loading));
     try {
-      // Add movie to viewed list automatically
-      if (!state.isViewed) {
-        await storage.addViewedMovie(ViewedMovie.fromMovieDetails(movie));
-        emit(state.copyWith(isViewed: true));
-      }
-
+      emit(state.copyWith(status: MovieDetailsStatus.loading));
       final cast = await repository.getMovieCast(movieId);
+      final reviews = await repository.getMovieReviews(movieId);
       emit(state.copyWith(
         status: MovieDetailsStatus.success,
         cast: cast,
+        reviews: reviews,
       ));
     } catch (e) {
       emit(state.copyWith(

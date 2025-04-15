@@ -104,7 +104,7 @@ class HomePage extends StatelessWidget {
               leading: const Icon(Icons.language),
               title: const Text('Language'),
               trailing: const LanguageSelector(),
-              onTap: () {},
+              onTap: () {}, // Empty onTap as we're using the trailing widget
             ),
             Consumer<ThemeService>(
               builder: (context, themeService, child) {

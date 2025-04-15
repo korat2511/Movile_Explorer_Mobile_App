@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+
 import '../../core/api/api_config.dart';
 import '../../domain/repositories/movie_repository.dart';
-import '../models/movie_details.dart';
+import '../../presentation/bloc/movie_details_bloc.dart';
 import '../models/cast.dart';
+import '../models/movie_details.dart';
+import '../models/review.dart';
 
 class MovieRepositoryImpl implements MovieRepository {
   final Dio _dio;
@@ -156,6 +161,21 @@ class MovieRepositoryImpl implements MovieRepository {
         return castList.map((cast) => Cast.fromJson(cast)).toList();
       } catch (e) {
         print('Error fetching movie cast: $e');
+        throw _handleError(e);
+      }
+    });
+  }
+
+  @override
+  Future<List<Review>> getMovieReviews(int movieId) async {
+    return _retryOnError(() async {
+      try {
+        print('Fetching movie reviews for ID: $movieId');
+        final response = await _dio.get(ApiConfig.getMovieReviewsEndpoint(movieId));
+        final reviewsList = response.data['results'] as List;
+        return reviewsList.map((review) => Review.fromJson(review)).toList();
+      } catch (e) {
+        print('Error fetching movie reviews: $e');
         throw _handleError(e);
       }
     });

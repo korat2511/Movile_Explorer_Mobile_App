@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:readmore/readmore.dart';
 import '../bloc/movie_details_bloc.dart';
 import '../../data/models/movie_details.dart';
 import '../../data/repositories/movie_repository_impl.dart';
@@ -58,6 +59,8 @@ class MovieDetailsContent extends StatelessWidget {
                   _buildOverview(),
                   const SizedBox(height: 24),
                   _buildCastSection(),
+                  const SizedBox(height: 24),
+                  _buildReviewsSection(),
                 ],
               ),
             ),
@@ -285,4 +288,197 @@ class MovieDetailsContent extends StatelessWidget {
       },
     );
   }
+
+  Widget _buildReviewsSection() {
+    return BlocBuilder<MovieDetailsBloc, MovieDetailsState>(
+      builder: (context, state) {
+        if (state.status == MovieDetailsStatus.loading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        if (state.status == MovieDetailsStatus.error) {
+          return ErrorView(
+            message: 'Failed to load reviews\n${state.error}',
+            onRetry: () {
+              context.read<MovieDetailsBloc>().add(LoadMovieDetails());
+            },
+          );
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Reviews',
+                  style: TextStyle(
+                    fontSize: ResponsiveLayout.isTablet(context) ? 24 : 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (state.reviews.isNotEmpty)
+                  Text(
+                    '${state.reviews.length} Reviews',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (state.reviews.isEmpty)
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                  child: Text(
+                    'No reviews available yet',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+              )
+            else
+              ListView.separated(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                itemCount: state.reviews.length,
+                separatorBuilder: (context, index) => const Divider(height: 32),
+                itemBuilder: (context, index) {
+                  final review = state.reviews[index];
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: SizedBox(
+                              width: 40,
+                              height: 40,
+                              child: review.fullAvatarPath != null
+                                ? Image.network(
+                                    review.fullAvatarPath!,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return _buildAvatarFallback(context, review.author);
+                                    },
+                                  )
+                                : _buildAvatarFallback(context, review.author),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      'A review by ${review.author}',
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    if (review.rating != null) ...[
+                                      const SizedBox(width: 8),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 2,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.star_rounded,
+                                              size: 16,
+                                              color: Theme.of(context).colorScheme.primary,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              '${(review.rating! * 10).toInt()}%',
+                                              style: TextStyle(
+                                                color: Theme.of(context).colorScheme.primary,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                                if (review.createdAt != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 4),
+                                    child: Text(
+                                      'Written ${review.formattedDate}',
+                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      ReadMoreText(
+                        review.content,
+                        trimLines: 5,
+                        colorClickableText: Theme.of(context).colorScheme.primary,
+                        trimMode: TrimMode.Line,
+                        trimCollapsedText: 'Read more',
+                        trimExpandedText: 'Show less',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          height: 1.4,
+                        ),
+                        moreStyle: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        lessStyle: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            SizedBox(height: MediaQuery.of(context).padding.bottom,)
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildAvatarFallback(BuildContext context, String author) => Container(
+    color: Theme.of(context).colorScheme.primary,
+    child: Center(
+      child: Text(
+        author[0].toUpperCase(),
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+        ),
+      ),
+    ),
+  );
 } 

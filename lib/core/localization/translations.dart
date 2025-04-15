@@ -1,5 +1,5 @@
 const englishTranslations = {
-  'app_title': 'Explorer Movies',
+  'app_title': 'Movies Explorer',
   'now_playing': 'Now Playing',
   'popular': 'Popular',
   'top_rated': 'Top Rated',
@@ -25,7 +25,7 @@ const englishTranslations = {
 };
 
 const hindiTranslations = {
-  'app_title': 'एक्सप्लोरर मूवीज',
+  'app_title': 'मूवीज एक्सप्लोरर',
   'now_playing': 'अभी चल रही',
   'popular': 'लोकप्रिय',
   'top_rated': 'टॉप रेटेड',

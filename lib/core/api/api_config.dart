@@ -17,6 +17,7 @@ class ApiConfig {
 
   static String getMovieDetailsEndpoint(int movieId) => '/movie/$movieId';
   static String getMovieCreditsEndpoint(int movieId) => '/movie/$movieId/credits';
+  static String getMovieReviewsEndpoint(int movieId) => '/movie/$movieId/reviews';
 }
 
 enum ImageSize {

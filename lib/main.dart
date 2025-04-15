@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'config/theme.dart';
+import 'core/localization/app_localizations.dart';
 import 'data/repositories/movie_repository_impl.dart';
+import 'data/services/language_service.dart';
+import 'data/services/local_storage_service.dart';
 import 'data/services/theme_service.dart';
 import 'presentation/bloc/movie_bloc.dart';
-import 'config/globals.dart';
-import 'config/theme.dart';
 import 'presentation/pages/home_page.dart';
-import 'data/services/local_storage_service.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'core/localization/app_localizations.dart';
-import 'data/services/language_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,7 +54,6 @@ class MyApp extends StatelessWidget {
     return Consumer2<ThemeService, LanguageService>(
       builder: (context, themeService, languageService, _) {
         return MaterialApp(
-          navigatorKey: Globals.navigatorKey,
           debugShowCheckedModeBanner: false,
           themeMode: themeService.themeMode,
           theme: lightTheme(),
